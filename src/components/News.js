@@ -7,21 +7,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 export default class News extends Component {
 
-    static defaultProps = {
-        country: 'in',
-        pageSize: 8,
-        category: 'general'
-    }
-    static propTypes = {
-        country: PropTypes.string,
-        pageSize: this.propTypes?.number,
-        category: this.propTypes?.string
-    }
-
-    CapitalizeFirstLetter = (str) => {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -32,17 +17,35 @@ export default class News extends Component {
         }
         document.title = `${this.CapitalizeFirstLetter(this.props.category)} - DailyUpdate`
     }
+    static defaultProps = {
+        country: 'in',
+        pageSize: 8,
+        category: 'general'
+    }
+    static propTypes = {
+        country: PropTypes.string,
+        pageSize: PropTypes.number,
+        category: PropTypes.string
+    }
+
+    CapitalizeFirstLetter = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     async updateNews() {
+        this.props.setProgress(10);
         const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=e93908fafac546ee8f1c7999bfb80a59&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         let data = await fetch(url);
+        this.props.setProgress(50);
         let parsedData = await data.json()
         console.log(parsedData);
+        this.props.setProgress(80);
         this.setState({
             articles: parsedData.articles,
             totalArticles: parsedData.totalResults,
             loading: false
         })
+        this.props.setProgress(100);
     }
 
     async componentDidMount() {
