@@ -9,7 +9,7 @@ const News = (props) => {
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalResult, setTotalResult] = useState(0)
-    // document.title = `${capitalizeFirstLetter(props.category)} - DailyUpdate`
+    
 
     const capitalizeFirstLetter = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -32,24 +32,15 @@ const News = (props) => {
     }
 
     useEffect(() => {
+        document.title = `${capitalizeFirstLetter(props.category)} - DailyUpdate`
         updateNews();
-         // eslint-disable-next-line 
+        // eslint-disable-next-line 
     }, [])
 
-    // const handlePrevClick = async () => {
-    //     setPage(page - 1)
-    //     updateNews();
-    // }
-
-    // const handleNextClick = async () => {
-    //     setPage(page + 1)
-    //     updateNews();
-    // }
-
     const fetchMoreData = async () => {
-        setPage(page + 1)
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}
-        &apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+        &apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`;
+        setPage(page + 1)
         let data = await fetch(url);
         let parsedData = await data.json()
         console.log(parsedData);
@@ -59,7 +50,7 @@ const News = (props) => {
 
     return (
         <>
-            <h1 class="text-center my-5">Daily Updates from {capitalizeFirstLetter(props.category)}</h1>
+            <h1 className="text-center" style={{ margin: '32px 0px', marginTop: '90px' }}>Daily Updates from {capitalizeFirstLetter(props.category)}</h1>
             {loading && <Spinner />}
             <InfiniteScroll
                 dataLength={articles.length}
@@ -68,9 +59,9 @@ const News = (props) => {
                 loader={<Spinner />}
             >
                 <div className="container">
-                    <div class='row' key={Element.url}>
+                    <div className='row' key={Element.url}>
                         {articles.map((element) => {
-                            return <div class="col-md-4">
+                            return <div className="col-md-4">
                                 <NewsItem title={element.title ? element.title.slice(0, 45) : ""} description={element.description ? element.description.slice(0, 88) : ""} ImageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt}
                                     source={element.source.name} />
                             </div>
